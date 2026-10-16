@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>J.A.R.V.I.S.</title>
+<style>
+body{margin:0;background:radial-gradient(circle,#103c64,#020713 75%);color:#bdefff;font-family:Arial,sans-serif;text-align:center;padding:22px}
+h1{letter-spacing:6px;color:#55dfff;text-shadow:0 0 20px #009dff}
+.core{width:150px;height:150px;border:3px solid #42dfff;border-radius:50%;margin:30px auto;display:grid;place-items:center;box-shadow:0 0 35px #078bff,inset 0 0 25px #078bff;animation:pulse 3s infinite}
+.core span{font-size:13px;letter-spacing:3px}
+@keyframes pulse{50%{box-shadow:0 0 55px #078bff,inset 0 0 35px #078bff}}
+.panel{border:1px solid #168fc2;background:#061526dd;border-radius:14px;padding:16px;margin:16px auto;max-width:600px}
+input,button{box-sizing:border-box;width:100%;padding:13px;margin:6px 0;border-radius:9px;font-size:16px}
+input{background:#020b18;color:white;border:1px solid #28b8ef}
+button{background:#07558b;color:white;border:1px solid #42dfff}
+.item{text-align:left;border-left:3px solid #42dfff;padding:10px;margin:10px 0;background:#0a2135}
+small{color:#80c8e9}
+</style>
+</head>
+<body>
+<h1>J.A.R.V.I.S.</h1>
+<div>STARK INDUSTRIES • SYSTEM ONLINE</div>
+<div class="core"><span>J.A.R.V.I.S.<br>ONLINE</span></div>
+<div id="status">BEREIT FÜR BEFEHLE</div>
+<section class="panel">
+<h3>SPRACHSTEUERUNG</h3>
+<button onclick="listen()">🎙 JARVIS, ZUHÖREN</button>
+<input id="q" placeholder="Frage an JARVIS …">
+<button onclick="ask()">BEFEHL AUSFÜHREN</button>
+<button onclick="speak()">🔊 ANTWORT VORLESEN</button>
+<p id="answer">Guten Tag. Wie kann ich helfen?</p>
+</section>
+<section class="panel">
+<h3>STARK-PROJEKTARCHIV</h3>
+<input id="search" placeholder="Projekt suchen …" oninput="render()">
+<div id="results"></div>
+</section>
+<script>
+const projects=[
+["Mark I","Iron Man (2008)","Tonys erste improvisierte Rüstung zur Flucht aus der Gefangenschaft."],
+["Mark II","Iron Man (2008)","Silberner Prototyp für Flugtests und Systementwicklung."],
+["Mark III","Iron Man (2008)","Die bekannte rot-goldene Rüstung."],
+["Arc-Reaktor","Iron Man","Fiktive kompakte Energiequelle für Tonys Herz und Anzug."],
+["J.A.R.V.I.S.","Iron-Man-Filme","Tonys KI-Assistent für Analysen und die Steuerung seiner Systeme."],
+["Mark V","Iron Man 2","Tragbare Rüstung in einem Koffer."],
+["Mark VI","Iron Man 2","Verbesserte Rüstung mit dreieckigem Reaktordesign."],
+["Mark VII","The Avengers","Rüstung, die sich im Einsatz selbst an Tony anlegen kann."],
+["Hulkbuster","Age of Ultron","Große Spezialrüstung, um den Hulk aufzuhalten."],
+["Ultron","Age of Ultron","KI zur Friedenssicherung, die sich gegen ihre Schöpfer wendet."],
+["Vision","Age of Ultron","Synthetischer Körper, verbunden mit J.A.R.V.I.S. und dem Mind Stone."],
+["F.R.I.D.A.Y.","Age of Ultron","KI-Assistentin, die Tony später unterstützt."],
+["BARF","Civil War","Holografische Technologie zur räumlichen Darstellung von Erinnerungen."],
+["EDITH","Far From Home","Stark-System in einer Brille mit Informations- und Drohnenfunktionen."],
+["Mark L / Mark 50","Infinity War","Nanotechnologische Rüstung, die ihre Form verändern kann."],
+["Mark LXXXV / Mark 85","Endgame","Hochentwickelte Nanotech-Rüstung aus Endgame."],
+["Zeitreise-GPS","Endgame","Navigationslösung für die Reise durch das Quantenreich."]
+];
+function render(){
+let q=document.getElementById("search").value.toLowerCase();
+document.getElementById("results").innerHTML=projects.filter(p=>p.join(" ").toLowerCase().includes(q)).map(p=>'<div class="item"><b>'+p[0]+'</b><br><small>'+p[1]+'</small><p>'+p[2]+'</p></div>').join("")||"Keine Treffer.";
+}
+function reply(q){
+let s=q.toLowerCase();
+if(/hallo|hey jarvis|guten tag/.test(s))return"Guten Tag. J.A.R.V.I.S. ist online.";
+if(/alle projekte|projektarchiv/.test(s)){document.getElementById("search").value="";render();return"Das Projektarchiv ist geöffnet."}
+let p=projects.find(p=>s.includes(p[0].toLowerCase())||p[0].toLowerCase().split(" ").some(w=>w.length>3&&s.includes(w)));
+return p?p[0]+". "+p[1]+". "+p[2]:"Dazu habe ich keinen eindeutigen Eintrag gefunden. Bitte versuchen Sie einen Projektnamen wie Mark III, Ultron oder Arc-Reaktor.";
+}
+function ask(){let q=document.getElementById("q").value;if(!q.trim())return;document.getElementById("answer").textContent=reply(q);document.getElementById("status").textContent="ANFRAGE VERARBEITET";speak()}
+function speak(){if(!("speechSynthesis"in window)){alert("Sprachausgabe wird nicht unterstützt.");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(document.getElementById("answer").textContent);u.lang="de-DE";speechSynthesis.speak(u)}
+function listen(){
+let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){document.getElementById("status").textContent="SPRACHE HIER NICHT UNTERSTÜTZT";return}
+let r=new SR();r.lang="de-DE";r.onstart=()=>document.getElementById("status").textContent="ICH HÖRE ZU";r.onerror=()=>document.getElementById("status").textContent="MIKROFON ODER BROWSER NICHT VERFÜGBAR";r.onresult=e=>{document.getElementById("q").value=e.results[0][0].transcript;ask()};r.start()
+}
+render();
+</script>
+</body>
+</html>
