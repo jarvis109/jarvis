@@ -1,80 +1,231 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>J.A.R.V.I.S.</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#020714">
+<title>J.A.R.V.I.S. – Stark Intelligence</title>
 <style>
-body{margin:0;background:radial-gradient(circle,#103c64,#020713 75%);color:#bdefff;font-family:Arial,sans-serif;text-align:center;padding:22px}
-h1{letter-spacing:6px;color:#55dfff;text-shadow:0 0 20px #009dff}
-.core{width:150px;height:150px;border:3px solid #42dfff;border-radius:50%;margin:30px auto;display:grid;place-items:center;box-shadow:0 0 35px #078bff,inset 0 0 25px #078bff;animation:pulse 3s infinite}
-.core span{font-size:13px;letter-spacing:3px}
-@keyframes pulse{50%{box-shadow:0 0 55px #078bff,inset 0 0 35px #078bff}}
-.panel{border:1px solid #168fc2;background:#061526dd;border-radius:14px;padding:16px;margin:16px auto;max-width:600px}
-input,button{box-sizing:border-box;width:100%;padding:13px;margin:6px 0;border-radius:9px;font-size:16px}
-input{background:#020b18;color:white;border:1px solid #28b8ef}
-button{background:#07558b;color:white;border:1px solid #42dfff}
-.item{text-align:left;border-left:3px solid #42dfff;padding:10px;margin:10px 0;background:#0a2135}
-small{color:#80c8e9}
+:root{--c:#53dfff;--t:#e7faff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 10%,#07345a,#04152d 38%,#020714 78%);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{text-align:center;padding:24px 15px 12px}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--c)}
+h1{font-weight:300;letter-spacing:.18em;text-shadow:0 0 20px #168bff}
+.core{width:105px;height:105px;margin:18px auto;border:1px solid var(--c);border-radius:50%;display:grid;place-items:center;box-shadow:0 0 20px #168bff88;position:relative}
+.core:after{content:"";position:absolute;inset:-8px;border:1px dashed var(--c);border-radius:50%;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.arc{width:48px;height:48px;border:4px solid var(--c);border-radius:50%;box-shadow:0 0 18px var(--c)}
+main{max-width:760px;margin:auto;padding:10px 14px 35px}
+.panel{background:#051930dd;border:1px solid #53dfff55;border-radius:14px;padding:15px;margin:12px 0;box-shadow:0 0 18px #00152b}
+.status{display:flex;justify-content:space-between;color:var(--c);font-size:11px}
+nav,.row,.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button{font:inherit;color:var(--t);background:#06203a;border:1px solid #53dfff66;border-radius:9px;padding:11px;cursor:pointer}
+button.primary{background:#07528a;border-color:var(--c)}
+nav button{flex:1}
+input{width:100%;font:inherit;color:white;background:#010b19;border:1px solid #53dfff66;border-radius:9px;padding:14px;margin:8px 0}
+.row button{flex:1}
+h2{font-size:14px;color:var(--c);font-weight:500;letter-spacing:.08em}
+#answer{line-height:1.6;min-height:85px;white-space:pre-wrap}
+.small,footer{font-size:12px;color:#91b8c9;line-height:1.5}
+ul{line-height:1.8;padding-left:20px}
+.chips button{font-size:12px;padding:8px}
+.grid{display:grid;grid-template-columns:1fr;gap:2px}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+footer{text-align:center;padding:16px}
 </style>
 </head>
 <body>
+<header>
+<div class="eyebrow">STARK INDUSTRIES • PERSONAL ASSISTANT</div>
 <h1>J.A.R.V.I.S.</h1>
-<div>STARK INDUSTRIES • SYSTEM ONLINE</div>
-<div class="core"><span>J.A.R.V.I.S.<br>ONLINE</span></div>
-<div id="status">BEREIT FÜR BEFEHLE</div>
+<div class="small">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+<div class="core"><div class="arc"></div></div>
+<div class="status"><span>● SYSTEM ONLINE</span><span>LOCAL ARCHIVE READY</span></div>
+</header>
+
+<main>
+<nav>
+<button class="primary" onclick="setMode('all',this)">Gesamtes Archiv</button>
+<button onclick="setMode('iron',this)">Iron Man</button>
+<button onclick="setMode('spider',this)">Spider-Man</button>
+</nav>
+
 <section class="panel">
-<h3>SPRACHSTEUERUNG</h3>
-<button onclick="listen()">🎙 JARVIS, ZUHÖREN</button>
-<input id="q" placeholder="Frage an JARVIS …">
-<button onclick="ask()">BEFEHL AUSFÜHREN</button>
-<button onclick="speak()">🔊 ANTWORT VORLESEN</button>
-<p id="answer">Guten Tag. Wie kann ich helfen?</p>
+<h2>FRAGE AN JARVIS</h2>
+<div class="small">Frage etwas über Tony Stark, Iron Man oder Spider-Man mit Tom Holland.</div>
+<input id="q" placeholder="z. B. Was kann der Iron Spider-Anzug?">
+<div class="row">
+<button class="primary" onclick="ask()">Analysieren</button>
+<button onclick="listen()">🎙️ Sprechen</button>
+</div>
+<div id="answer" aria-live="polite">Guten Tag. Wissensarchiv geladen. Wie kann ich behilflich sein?</div>
+<div class="row">
+<button onclick="speak()">🔊 Antwort vorlesen</button>
+<button onclick="stopSpeak()">Stimme stoppen</button>
+</div>
+<p class="small">Mikrofon und Vorlesefunktion hängen von den Browserfunktionen und Berechtigungen deines iPhones ab.</p>
 </section>
+
+<div class="grid">
 <section class="panel">
-<h3>STARK-PROJEKTARCHIV</h3>
-<input id="search" placeholder="Projekt suchen …" oninput="render()">
-<div id="results"></div>
+<h2>IRON MAN • WISSENSARCHIV</h2>
+<ul>
+<li>Tony Stark und seine Erfindungen</li>
+<li>Arc-Reaktor und Energieversorgung</li>
+<li>Iron-Man-Rüstungen und Nanotechnologie</li>
+<li>J.A.R.V.I.S. und F.R.I.D.A.Y.</li>
+<li>Avengers und Starks Filmgeschichte</li>
+</ul>
+<div class="chips">
+<button onclick="quick('Was ist der Arc-Reaktor?')">Arc-Reaktor</button>
+<button onclick="quick('Welche Iron-Man-Anzüge gibt es?')">Anzüge</button>
+<button onclick="quick('Was ist JARVIS?')">JARVIS</button>
+</div>
 </section>
+
+<section class="panel">
+<h2>SPIDER-MAN • TOM HOLLAND</h2>
+<ul>
+<li>Peter Parker und seine Kräfte</li>
+<li>Stark-Anzug und Iron Spider</li>
+<li>Freunde, Gegner und Verbündete</li>
+<li>MCU-Auftritte und Filmwissen</li>
+<li>Verbindung zwischen Peter und Tony</li>
+</ul>
+<div class="chips">
+<button onclick="quick('Was kann Spider-Man?')">Fähigkeiten</button>
+<button onclick="quick('Was kann der Iron Spider-Anzug?')">Iron Spider</button>
+<button onclick="quick('Welche Filme zeigen Spider-Man von Tom Holland?')">Filme</button>
+</div>
+</section>
+</div>
+
+<section class="panel">
+<h2>ARCHIV-UMFANG</h2>
+<p class="small">Tom Hollands Spider-Man: Captain America: Civil War, Homecoming, Avengers: Infinity War, Avengers: Endgame, Far From Home, No Way Home und Brand New Day (2026). Dies ist ein eingebautes Grundwissen, keine vollständige Filmszenen-Datenbank und keine Live-Internet-KI.</p>
+</section>
+<footer>J.A.R.V.I.S. FAN PROJECT • Nicht offiziell mit Marvel oder Stark Industries verbunden.</footer>
+</main>
+
 <script>
-const projects=[
-["Mark I","Iron Man (2008)","Tonys erste improvisierte Rüstung zur Flucht aus der Gefangenschaft."],
-["Mark II","Iron Man (2008)","Silberner Prototyp für Flugtests und Systementwicklung."],
-["Mark III","Iron Man (2008)","Die bekannte rot-goldene Rüstung."],
-["Arc-Reaktor","Iron Man","Fiktive kompakte Energiequelle für Tonys Herz und Anzug."],
-["J.A.R.V.I.S.","Iron-Man-Filme","Tonys KI-Assistent für Analysen und die Steuerung seiner Systeme."],
-["Mark V","Iron Man 2","Tragbare Rüstung in einem Koffer."],
-["Mark VI","Iron Man 2","Verbesserte Rüstung mit dreieckigem Reaktordesign."],
-["Mark VII","The Avengers","Rüstung, die sich im Einsatz selbst an Tony anlegen kann."],
-["Hulkbuster","Age of Ultron","Große Spezialrüstung, um den Hulk aufzuhalten."],
-["Ultron","Age of Ultron","KI zur Friedenssicherung, die sich gegen ihre Schöpfer wendet."],
-["Vision","Age of Ultron","Synthetischer Körper, verbunden mit J.A.R.V.I.S. und dem Mind Stone."],
-["F.R.I.D.A.Y.","Age of Ultron","KI-Assistentin, die Tony später unterstützt."],
-["BARF","Civil War","Holografische Technologie zur räumlichen Darstellung von Erinnerungen."],
-["EDITH","Far From Home","Stark-System in einer Brille mit Informations- und Drohnenfunktionen."],
-["Mark L / Mark 50","Infinity War","Nanotechnologische Rüstung, die ihre Form verändern kann."],
-["Mark LXXXV / Mark 85","Endgame","Hochentwickelte Nanotech-Rüstung aus Endgame."],
-["Zeitreise-GPS","Endgame","Navigationslösung für die Reise durch das Quantenreich."]
+let mode='all';
+let last='Guten Tag. Wissensarchiv geladen. Wie kann ich behilflich sein?';
+
+const facts=[
+['iron',['arc reactor','arc-reactor','reaktor','energie'],
+'Der Arc-Reaktor ist Tony Starks kompakte Energiequelle. In den frühen Iron-Man-Filmen unterstützt er den Elektromagneten in seiner Brust und wird Teil seiner technologischen Entwicklung. Die genaue Funktionsweise ist Science-Fiction.'],
+
+['iron',['anzug','rüstung','rüstungen','mark','nanotechnologie','nanotech'],
+'Tony Stark entwickelt viele Iron-Man-Rüstungen. Frühere Modelle sind mechanisch und werden Stück für Stück angelegt; spätere Modelle nutzen fortgeschrittene Materialien und Nanotechnologie. Fähigkeiten unterscheiden sich je nach Modell und Film.'],
+
+['iron',['jarvis','j.a.r.v.i.s','assistent','butler'],
+'J.A.R.V.I.S. steht für „Just A Rather Very Intelligent System“. In den MCU-Filmen ist er Tonys KI-Assistent und unterstützt ihn bei Analysen, Laborarbeit und technischen Systemen. Ein Teil seiner Technologie wird später mit Vision verbunden.'],
+
+['iron',['friday','f.r.i.d.a.y'],
+'F.R.I.D.A.Y. ist eine KI, die Tony Stark nach Avengers: Age of Ultron als Assistentin verwendet. Sie unterstützt ihn bei Situationsanalysen und der Bedienung seiner Rüstung.'],
+
+['iron',['tony stark','iron man','wer ist tony','wer ist iron man'],
+'Tony Stark ist ein genialer Erfinder und Unternehmer, der die Iron-Man-Rüstung entwickelt. Im Marvel Cinematic Universe wird er von Robert Downey Jr. gespielt. Seine Geschichte verbindet Technologie, Verantwortung und die Avengers.'],
+
+['iron',['avengers','endgame','opfer','snap','thanos'],
+'Tony Stark spielt eine zentrale Rolle in den Avengers-Filmen. In Avengers: Endgame hilft er, Thanos aufzuhalten, und setzt dabei die Infinity-Steine ein. Diese Entscheidung kostet ihn das Leben.'],
+
+['spider',['fähigkeiten','kraft','spider-man','spiderman','spinnensinn','netze'],
+'Peter Parker besitzt in den MCU-Filmen übermenschliche Kraft, Beweglichkeit und Reflexe, einen Spinnensinn und die Fähigkeit, an Wänden zu haften. Seine Netzschießer sind technische Geräte.'],
+
+['spider',['iron spider','goldene arme','mechanische arme','spider suit','stark suit'],
+'Der Iron Spider-Anzug ist eine fortschrittliche Rüstung, die Tony Stark für Peter entwickelt. Er besitzt unter anderem mechanische Zusatzarme und fortgeschrittene Schutz- und Assistenzfunktionen. Peters weitere Anzüge unterscheiden sich in Technik und Zweck.'],
+
+['spider',['homecoming','vulture','adrian toomes'],
+'In Spider-Man: Homecoming (2017) versucht Peter, sein Leben als Schüler mit seiner Rolle als Held zu verbinden. Tony Stark ist sein Mentor, und Adrian Toomes, der Vulture, wird zu seinem wichtigsten Gegner.'],
+
+['spider',['far from home','mysterio','quentin beck'],
+'In Spider-Man: Far From Home (2019) verarbeitet Peter die Ereignisse nach Avengers: Endgame und reist mit seiner Schulklasse nach Europa. Quentin Beck, bekannt als Mysterio, gibt sich als Held aus, verfolgt aber eigene Ziele.'],
+
+['spider',['no way home','doctor strange','dr. strange','multiversum','tobey','andrew'],
+'In Spider-Man: No Way Home (2021) führt ein Zauber von Doctor Strange zu Problemen rund um das Multiversum. Peter trifft auf Gegner aus anderen Spider-Man-Universen. Am Ende verändert ein weiterer Zauber, wer sich an Peter Parker erinnert.'],
+
+['spider',['brand new day','2026','neuer film'],
+'Spider-Man: Brand New Day ist der vierte Film mit Tom Holland als Spider-Man und gehört zum MCU. Die Geschichte setzt nach No Way Home an: Die Welt erinnert sich nicht mehr an Peter Parker, während er als Spider-Man weiter Verbrechen bekämpft.'],
+
+['spider',['civil war','first avenger'],
+'Tom Hollands Peter Parker tritt im MCU erstmals in Captain America: Civil War (2016) auf. Tony Stark rekrutiert ihn für den Konflikt der Avengers. Peter ist noch jung und lernt, Verantwortung für seine Fähigkeiten zu übernehmen.'],
+
+['spider',['infinity war'],
+'In Avengers: Infinity War (2018) kämpft Spider-Man an der Seite von Iron Man und anderen Helden gegen Thanos. Die Ereignisse haben schwere Folgen, die in Avengers: Endgame aufgegriffen werden.'],
+
+['spider',['blip'],
+'In Avengers: Endgame (2019) kehren die durch Thanos ausgelöschten Menschen zurück. Peter Parker ist unter den Zurückkehrenden und trifft Tony Stark wieder. Die Ereignisse prägen Spider-Man: Far From Home.'],
+
+['spider',['mj','ned','happy','freunde','freundin'],
+'Zu Peters wichtigem Umfeld gehören MJ (Michelle Jones-Watson), sein Freund Ned Leeds, Tante May und Happy Hogan. Ihre Beziehungen zu Peter verändern sich im Lauf der Filme.'],
+
+['all',['filme','filmreihenfolge','film liste','tom holland'],
+'Die wichtigen MCU-Auftritte von Tom Hollands Spider-Man in Veröffentlichungsreihenfolge sind: Captain America: Civil War (2016), Spider-Man: Homecoming (2017), Avengers: Infinity War (2018), Avengers: Endgame (2019), Spider-Man: Far From Home (2019), Spider-Man: No Way Home (2021) und Spider-Man: Brand New Day (2026).'],
+
+['all',['tony und peter','verbindung','mentor','peter und tony'],
+'Tony Stark ist für Peter Parker zunächst ein Mentor. Er erkennt Peters Potenzial, stellt ihm Technologie zur Verfügung und versucht, ihm Verantwortung beizubringen. Ihre Beziehung beeinflusst Peters Entwicklung besonders in Homecoming, Infinity War, Endgame und Far From Home.']
 ];
-function render(){
-let q=document.getElementById("search").value.toLowerCase();
-document.getElementById("results").innerHTML=projects.filter(p=>p.join(" ").toLowerCase().includes(q)).map(p=>'<div class="item"><b>'+p[0]+'</b><br><small>'+p[1]+'</small><p>'+p[2]+'</p></div>').join("")||"Keine Treffer.";
+
+function setMode(m,b){
+ mode=m;
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('primary'));
+ b.classList.add('primary');
+ show('Archiv ausgewählt: '+({all:'Gesamtes Archiv',iron:'Iron Man',spider:'Spider-Man'}[m])+'. Stelle deine Frage.');
 }
-function reply(q){
-let s=q.toLowerCase();
-if(/hallo|hey jarvis|guten tag/.test(s))return"Guten Tag. J.A.R.V.I.S. ist online.";
-if(/alle projekte|projektarchiv/.test(s)){document.getElementById("search").value="";render();return"Das Projektarchiv ist geöffnet."}
-let p=projects.find(p=>s.includes(p[0].toLowerCase())||p[0].toLowerCase().split(" ").some(w=>w.length>3&&s.includes(w)));
-return p?p[0]+". "+p[1]+". "+p[2]:"Dazu habe ich keinen eindeutigen Eintrag gefunden. Bitte versuchen Sie einen Projektnamen wie Mark III, Ultron oder Arc-Reaktor.";
+
+function quick(s){
+ document.getElementById('q').value=s;
+ ask();
 }
-function ask(){let q=document.getElementById("q").value;if(!q.trim())return;document.getElementById("answer").textContent=reply(q);document.getElementById("status").textContent="ANFRAGE VERARBEITET";speak()}
-function speak(){if(!("speechSynthesis"in window)){alert("Sprachausgabe wird nicht unterstützt.");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(document.getElementById("answer").textContent);u.lang="de-DE";speechSynthesis.speak(u)}
+
+function show(s){
+ last=s;
+ document.getElementById('answer').textContent=s;
+}
+
+function ask(){
+ let q=document.getElementById('q').value.trim().toLowerCase();
+ if(!q){show('Bitte gib eine Frage ein oder nutze die Mikrofontaste.');return}
+ let candidates=facts.filter(f=>(mode==='all'||f[0]===mode||f[0]==='all')&&f[1].some(k=>q.includes(k)))
+ .sort((a,b)=>Math.max(0,...b[1].filter(k=>q.includes(k)).map(k=>k.length))-Math.max(0,...a[1].filter(k=>q.includes(k)).map(k=>k.length)));
+ if(candidates.length){show(candidates[0][2]);return}
+ if(/hallo|guten tag|hi jarvis/.test(q)){
+  show('Guten Tag. Alle lokalen Wissensmodule sind bereit. Soll ich Iron Man oder Spider-Man analysieren?');return
+ }
+ show('Dazu habe ich im eingebauten Archiv noch keine genaue Antwort. Versuche Begriffe wie Arc-Reaktor, Iron Spider, Mysterio, Homecoming oder Tony und Peter. Dieses Demo-Archiv ist keine Live-Internet-KI.');
+}
+
+function speak(){
+ if(!('speechSynthesis'in window)){alert('Vorlesefunktion in diesem Browser nicht verfügbar.');return}
+ speechSynthesis.cancel();
+ let u=new SpeechSynthesisUtterance(last);
+ u.lang='de-DE';u.rate=.92;u.pitch=.82;
+ speechSynthesis.speak(u);
+}
+
+function stopSpeak(){
+ if('speechSynthesis'in window)speechSynthesis.cancel();
+}
+
 function listen(){
-let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SR){document.getElementById("status").textContent="SPRACHE HIER NICHT UNTERSTÜTZT";return}
-let r=new SR();r.lang="de-DE";r.onstart=()=>document.getElementById("status").textContent="ICH HÖRE ZU";r.onerror=()=>document.getElementById("status").textContent="MIKROFON ODER BROWSER NICHT VERFÜGBAR";r.onresult=e=>{document.getElementById("q").value=e.results[0][0].transcript;ask()};r.start()
+ let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){alert('Spracherkennung ist in diesem Browser nicht verfügbar. Du kannst die Frage eintippen.');return}
+ let r=new SR();
+ r.lang='de-DE';r.interimResults=false;
+ r.onresult=e=>{
+  document.getElementById('q').value=e.results[0][0].transcript;
+  ask();
+ };
+ r.onerror=()=>alert('Mikrofon nicht verfügbar. Prüfe die Safari-Berechtigung oder tippe die Frage ein.');
+ r.start();
 }
-render();
+
+document.getElementById('q').addEventListener('keydown',e=>{
+ if(e.key==='Enter')ask();
+});
 </script>
 </body>
 </html>
