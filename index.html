@@ -193,7 +193,7 @@ function ask(){
  .sort((a,b)=>Math.max(0,...b[1].filter(k=>q.includes(k)).map(k=>k.length))-Math.max(0,...a[1].filter(k=>q.includes(k)).map(k=>k.length)));
  if(candidates.length){show(candidates[0][2]);return}
  if(/hallo|guten tag|hi jarvis/.test(q)){
-  show('Guten Tag. Alle lokalen Wissensmodule sind bereit. Soll ich Iron Man oder Spider-Man analysieren?');return
+  show('Hallo, Mr Stark. Alle lokalen Wissensmodule sind bereit. Soll ich Iron Man oder Spider-Man analysieren?');return
  }
  show('Dazu habe ich im eingebauten Archiv noch keine genaue Antwort. Versuche Begriffe wie Arc-Reaktor, Iron Spider, Mysterio, Homecoming oder Tony und Peter. Dieses Demo-Archiv ist keine Live-Internet-KI.');
 }
@@ -397,7 +397,7 @@ footer { text-align: center; color: #729bb5; font-size: 11px; padding: 20px; }
   </div>
 </main>
 
-<footer>JARVIS FAN PROJECT · NICHT MIT MARVEL ODER SONY VERBUNDEN</footer>
+<footer>JARVIS PROJECT · NICHT MIT MARVEL ODER SONY VERBUNDEN</footer>
 
 <script>
 const suits = [
