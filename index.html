@@ -229,3 +229,377 @@ document.getElementById('q').addEventListener('keydown',e=>{
 </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS – Spider-Man Archiv</title>
+<style>
+:root {
+  --blue: #36cfff;
+  --deep: #03101f;
+  --panel: rgba(4, 29, 52, .88);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: #eafaff;
+  background: radial-gradient(ellipse at top, #103b67, #020711 70%);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+header {
+  text-align: center;
+  padding: 22px 12px 15px;
+  border-bottom: 1px solid #36cfff66;
+  letter-spacing: 4px;
+}
+header h1 {
+  color: var(--blue);
+  margin: 0;
+  font-size: clamp(23px, 5vw, 38px);
+  text-shadow: 0 0 18px #16aaff;
+}
+header p { font-size: 12px; letter-spacing: 2px; }
+main { width: min(950px, 94%); margin: auto; padding: 18px 0 35px; }
+.status {
+  border: 1px solid #36cfff66;
+  padding: 10px;
+  border-radius: 10px;
+  color: var(--blue);
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.screen {
+  border: 1px solid var(--blue);
+  background: var(--panel);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 0 24px #008cff33, inset 0 0 24px #008cff12;
+}
+.screen img {
+  display: block;
+  width: 100%;
+  max-height: 390px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #020916;
+}
+.tag {
+  color: var(--blue);
+  letter-spacing: 2px;
+  font-size: 11px;
+  margin-top: 14px;
+}
+h2 { margin: 8px 0; font-size: 25px; }
+#description { line-height: 1.6; color: #d3eaf8; }
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 9px;
+  margin-top: 15px;
+}
+.fact {
+  background: #0b2942;
+  border: 1px solid #36cfff55;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.fact b { display: block; color: var(--blue); margin-bottom: 5px; }
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 14px 0;
+}
+button {
+  color: #eafaff;
+  background: #073253;
+  border: 1px solid var(--blue);
+  border-radius: 9px;
+  padding: 12px 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:active { background: #12618a; }
+button.primary {
+  background: #087cb0;
+  box-shadow: 0 0 12px #00aaff55;
+}
+.counter { color: var(--blue); font-size: 12px; margin-top: 12px; }
+input {
+  flex: 1;
+  min-width: 180px;
+  background: #061827;
+  border: 1px solid #36cfff88;
+  border-radius: 9px;
+  padding: 12px;
+  color: white;
+}
+.help { color: #a8c6d8; font-size: 12px; line-height: 1.6; }
+footer { text-align: center; color: #729bb5; font-size: 11px; padding: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>J.A.R.V.I.S.</h1>
+  <p>SPIDER-MAN TECHNOLOGY ARCHIVE</p>
+</header>
+
+<main>
+  <div class="status" id="status">SYSTEM ONLINE · ARCHIV BEREIT</div>
+
+  <div class="screen">
+    <img id="heroImage" src="suits.png"
+      alt="Blaues Hologramm mit Spider-Man-Anzugentwürfen"
+      onerror="this.onerror=null;this.src='workshop.png';">
+    <div class="tag" id="category">STARK TECHNOLOGY DATABASE</div>
+    <h2 id="title">Spider-Man Anzugarchiv</h2>
+    <p id="description">
+      Willkommen im Archiv. Wähle einen Anzug aus oder sage:
+      „JARVIS, zeige mir alles, was du zu Spider-Man hast.“
+    </p>
+    <div class="facts" id="facts"></div>
+    <div class="counter" id="counter"></div>
+  </div>
+
+  <div class="controls">
+    <button onclick="previous()">◀ Zurück</button>
+    <button class="primary" onclick="next()">Weiter ▶</button>
+    <button onclick="speakCurrent()">🔊 Fakten vorlesen</button>
+    <button onclick="stopSpeaking()">■ Stopp</button>
+  </div>
+
+  <div class="controls">
+    <button onclick="showArchive()">Alle Anzüge</button>
+    <button onclick="showWebShooters()">Web-Shooter</button>
+    <button onclick="showWorkshop()">Werkbank-Hologramm</button>
+    <button onclick="listen()">🎙️ JARVIS sprechen</button>
+  </div>
+
+  <div class="screen">
+    <div class="tag">SPRACHBEFEHL / SUCHANFRAGE</div>
+    <div class="controls">
+      <input id="question" placeholder="z. B. JARVIS, zeige die Web-Shooter">
+      <button class="primary" onclick="ask()">Ausführen</button>
+    </div>
+    <p class="help">
+      Probiere: „Zeige mir alle Spider-Man-Anzüge“,
+      „Zeige den Stealth Suit“, „Zeige den Upgraded Suit“
+      oder „Erkläre die Web-Shooter“.
+    </p>
+    <p id="answer" aria-live="polite"></p>
+  </div>
+</main>
+
+<footer>JARVIS FAN PROJECT · NICHT MIT MARVEL ODER SONY VERBUNDEN</footer>
+
+<script>
+const suits = [
+ {
+  name: "Stark Suit",
+  category: "STARK TECHNOLOGY · ROT / BLAU",
+  image: "suits.png",
+  description: "Der klassische rot-blaue Anzug, den Peter Parker von Tony Stark erhält. Er verbindet das traditionelle Spider-Man-Design mit Stark-Technologie.",
+  facts: [
+   ["Herkunft", "Von Tony Stark bereitgestellt"],
+   ["Design", "Rot und Blau mit Spinnenemblem"],
+   ["Technik", "Der Film zeigt einen technisch unterstützten Anzug"],
+   ["Wichtig", "Frühere MCU-Version des Spider-Man-Anzugs"]
+  ]
+ },
+ {
+  name: "Iron Spider Suit",
+  category: "STARK TECHNOLOGY · NANOTECH",
+  image: "suits.png",
+  description: "Ein hochentwickelter Anzug von Tony Stark. Er besitzt metallische Spinnenarme, die Peter im Kampf unterstützen.",
+  facts: [
+   ["Herkunft", "Von Tony Stark"],
+   ["Besonderheit", "Zusätzliche mechanische Arme"],
+   ["Technik", "Fortschrittliche Stark-Rüstung"],
+   ["Farben", "Rot, Blau und Gold"]
+  ]
+ },
+ {
+  name: "Stealth Suit – Night Monkey",
+  category: "FAR FROM HOME · SCHWARZER ANZUG",
+  image: "suits.png",
+  description: "Peter trägt diesen schwarzen Tarnanzug während seiner Europareise. Er hilft dabei, ihn nicht sofort als Spider-Man zu erkennen. Im Film wird er als Stealth Suit bezeichnet.",
+  facts: [
+   ["Aussehen", "Schwarz mit dunklen Details"],
+   ["Zweck", "Unauffälliger Auftritt"],
+   ["Maske", "Verdeckt Peters Identität"],
+   ["Spitzname", "Night Monkey"]
+  ]
+ },
+ {
+  name: "Upgraded Suit",
+  category: "FAR FROM HOME · ROT / SCHWARZ",
+  image: "suits.png",
+  description: "Peter verwendet diesen Anzug für den Kampf in London. Er gestaltet ihn mithilfe der Stark-Technologie selbst und übernimmt dabei mehr Verantwortung für seine Ausrüstung.",
+  facts: [
+   ["Design", "Rot und Schwarz"],
+   ["Entstehung", "Peter fertigt ihn im Stark-Jet"],
+   ["Emblem", "Helles Spinnenzeichen"],
+   ["Bedeutung", "Peter entwickelt sich als eigener Held"]
+  ]
+ },
+ {
+  name: "Web-Shooter",
+  category: "SPIDER-MAN GEAR · HANDGELENK",
+  image: "workshop.png",
+  description: "Die Web-Shooter sitzen an Peters Handgelenken. Im MCU nutzt Peter sie, um künstliche Netze zu verschießen. Die genauen Funktionen hängen von Anzug und Filmszene ab.",
+  facts: [
+   ["Position", "Am Handgelenk"],
+   ["Funktion", "Verschießt künstliche Netze"],
+   ["Netze", "Dienen unter anderem zum Schwingen und Festhalten"],
+   ["Wichtig", "Fiktive Filmtechnik, kein echtes Gerät"]
+  ]
+ }
+];
+
+let current = 0;
+
+function render() {
+ const s = suits[current];
+ document.getElementById("heroImage").src = s.image;
+ document.getElementById("category").textContent = s.category;
+ document.getElementById("title").textContent = s.name;
+ document.getElementById("description").textContent = s.description;
+ document.getElementById("facts").innerHTML = s.facts.map(f =>
+   `<div class="fact"><b>${f[0]}</b>${f[1]}</div>`
+ ).join("");
+ document.getElementById("counter").textContent =
+   `ARCHIV-EINTRAG ${current + 1} / ${suits.length}`;
+ document.getElementById("status").textContent =
+   "SYSTEM ONLINE · " + s.name.toUpperCase();
+}
+
+function next() {
+ current = (current + 1) % suits.length;
+ render();
+}
+function previous() {
+ current = (current - 1 + suits.length) % suits.length;
+ render();
+}
+function showArchive() {
+ current = 0;
+ render();
+ document.getElementById("answer").textContent =
+   "Spider-Man-Archiv geöffnet. Nutze Weiter und Zurück, um die Einträge durchzusehen.";
+}
+function showWebShooters() {
+ current = 4;
+ render();
+}
+function showWorkshop() {
+ document.getElementById("heroImage").src = "workshop.png";
+ document.getElementById("category").textContent = "STARK JET · HOLOGRAMM";
+ document.getElementById("title").textContent = "Anzug-Entwicklung";
+ document.getElementById("description").textContent =
+   "Peter untersucht und entwickelt seine Ausrüstung. Das Bild zeigt den von dir hochgeladenen Werkbank-Screenshot.";
+ document.getElementById("facts").innerHTML =
+   '<div class="fact"><b>Werkbank</b>Technik und Anzugdesign</div>' +
+   '<div class="fact"><b>Hologramm</b>Visuelle Entwürfe</div>';
+ document.getElementById("counter").textContent = "REFERENZBILD";
+}
+function speak(text) {
+ if (!("speechSynthesis" in window)) {
+   document.getElementById("answer").textContent =
+     "Vorlesen wird von diesem Browser nicht unterstützt.";
+   return;
+ }
+ speechSynthesis.cancel();
+ const u = new SpeechSynthesisUtterance(text);
+ u.lang = "de-DE";
+ u.rate = 0.95;
+ speechSynthesis.speak(u);
+}
+function speakCurrent() {
+ const s = suits[current];
+ speak(s.name + ". " + s.description + ". " +
+       s.facts.map(f => f[0] + ": " + f[1]).join(". "));
+}
+function stopSpeaking() {
+ if ("speechSynthesis" in window) speechSynthesis.cancel();
+}
+function ask() {
+ const q = document.getElementById("question").value.toLowerCase();
+ const answer = document.getElementById("answer");
+ if (!q.trim()) {
+   answer.textContent = "Bitte gib einen Befehl ein.";
+   return;
+ }
+ if (q.includes("web-shooter") || q.includes("web shooter") ||
+     q.includes("webshoot") || q.includes("netze")) {
+   showWebShooters();
+   answer.textContent = "Web-Shooter-Archiv geöffnet.";
+ } else if (q.includes("stealth") || q.includes("night monkey") ||
+            q.includes("schwarz")) {
+   current = 2; render();
+   answer.textContent = "Stealth Suit ausgewählt.";
+ } else if (q.includes("upgraded") || q.includes("rot") ||
+            q.includes("schwarz-roten") || q.includes("far from home")) {
+   current = 3; render();
+   answer.textContent = "Upgraded Suit ausgewählt.";
+ } else if (q.includes("iron spider")) {
+   current = 1; render();
+   answer.textContent = "Iron Spider Suit ausgewählt.";
+ } else if (q.includes("stark suit")) {
+   current = 0; render();
+   answer.textContent = "Stark Suit ausgewählt.";
+ } else if (q.includes("alles") || q.includes("spider-man") ||
+            q.includes("spiderman") || q.includes("alle anzüge")) {
+   showArchive();
+   answer.textContent = "Spider-Man-Archiv geöffnet. Du kannst die Einträge der Reihe nach durchsehen.";
+ } else {
+   answer.textContent =
+     "Dazu habe ich in diesem lokalen Archiv noch keinen eigenen Eintrag. Probiere „Anzüge“, „Stealth Suit“ oder „Web-Shooter“. ";
+ }
+}
+function listen() {
+ const Recognition = window.SpeechRecognition ||
+                     window.webkitSpeechRecognition;
+ if (!Recognition) {
+   document.getElementById("answer").textContent =
+     "Spracherkennung wird hier nicht unterstützt. Nutze bitte das Textfeld.";
+   return;
+ }
+ const recognition = new Recognition();
+ recognition.lang = "de-DE";
+ recognition.onstart = () => {
+   document.getElementById("status").textContent = "JARVIS HÖRT ZU …";
+ };
+ recognition.onresult = event => {
+   const text = event.results[0][0].transcript;
+   document.getElementById("question").value = text;
+   ask();
+   if (text.toLowerCase().includes("zeige mir alles")) {
+     speak("Natürlich. Ich öffne das Spider-Man-Archiv.");
+   } else {
+     speak(document.getElementById("answer").textContent);
+   }
+ };
+ recognition.onerror = () => {
+   document.getElementById("status").textContent =
+     "MIKROFON NICHT VERFÜGBAR · BERECHTIGUNG PRÜFEN";
+ };
+ recognition.onend = () => {
+   if (!document.getElementById("status").textContent.includes("MIKROFON"))
+     document.getElementById("status").textContent = "SYSTEM ONLINE";
+ };
+ recognition.start();
+}
+document.getElementById("question").addEventListener("keydown", e => {
+ if (e.key === "Enter") ask();
+});
+render();
+</script>
+</body>
+</html>
